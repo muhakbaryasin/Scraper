@@ -27,14 +27,15 @@ def scraper(request):
 		json_params = json.loads( base64.b64decode( request_params['json_params'] ).decode() )
 	else: json_params = None
 	
-	scraper = Scraper(url=url, method=method, headers=headers)
+	scraper = Scraper(url=url, method=method, headers=json_headers)
 	
 	if json_params is not None:
 		scraper.updateParams(json_params)
 	
 	res = scraper.execute()
+	# import pdb; pdb.set_trace()
 	
-	return {'code' : 'ok', 'message' : 'success', 'data' : None}
+	return {'code' : 'ok', 'message' : 'success', 'data' : res.text}
 	
 	
 		
