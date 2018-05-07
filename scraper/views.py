@@ -7,7 +7,7 @@ import base64
 def my_view(request):
 	return {'project': 'scraper'}
 
-@view_config(route_name='scraper', method='POST', renderer='json')
+@view_config(route_name='scraper', renderer='json')
 def scraper(request):
 	if 'url' not in request.params:
 		return {'code': 'ok', 'message' : 'Parameter url nya bung'}
