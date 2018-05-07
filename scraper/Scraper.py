@@ -34,7 +34,7 @@ class Scraper(object):
 
 		self.id = id
 
-	def updateHeaders(self, headers)
+	def updateHeaders(self, headers):
 		if type(headers) is not dict:
 			raise Exception("Headers must be a dict.")
 		
@@ -52,13 +52,13 @@ class Scraper(object):
 	
 		self.params.update(params)
 	
-	def getParams(self)
+	def getParams(self):
 		return self.params
 	
-	def getHeaders(self)
+	def getHeaders(self):
 		return self.headers
 	
-	def getMethod(self)
+	def getMethod(self):
 		return self.method
 	
 	def execute(self):
