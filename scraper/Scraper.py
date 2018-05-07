@@ -4,6 +4,7 @@ class Scraper(object):
 	def __init__(self, url, method='GET', id=None, headers=None):
 		self.setUrl(url)
 		self.setMethod(method)
+		self.setParams( {} )
 		
 		if id is not None:
 			self.setId(id)
@@ -44,6 +45,12 @@ class Scraper(object):
 			raise Exception("Params must be a dict.")
 	
 		self.params = params
+	
+	def updateParams(self, params):
+		if type(params) is not dict:
+			raise Exception("Params must be a dict.")
+	
+		self.params.update(params)
 	
 	def getParams(self)
 		return self.params
