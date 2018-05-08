@@ -21,7 +21,7 @@ class MainView(object):
 	@view_config(route_name='scraper', renderer='json')
 	def scraper(self):
 		try:
-			self.reqon.checkComplete(self.reqon.REQ_SCRAPER)
+			#self.reqon.checkComplete(self.reqon.REQ_SCRAPER)
 			
 			if 'url' not in self.request.params:
 				return {'code': 'ok', 'message' : 'Parameter url nya bung'}
@@ -53,11 +53,11 @@ class MainView(object):
 			except:
 				resp = res.text.replace('\n', '')
 			
-			return {'code' : 'ok', 'message' : 'success', 'data' : resp}
+			return {'code' : 'OK', 'message' : 'success', 'data' : resp}
 	
-	except Exception as e:
+		except Exception as e:
 			log.exception('error scraper')
-			return {'code' : 'ok', 'message' : 'error - {}'.format(str(e)) , 'data' : resp}
+			return {'code' : 'ERROR', 'message' : 'error - {}'.format(str(e)) , 'data' : None}
 	
 		
 		

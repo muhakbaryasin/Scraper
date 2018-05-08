@@ -1,4 +1,4 @@
-from ..RequestController import RequestController
+from .RequestController import RequestController
 
 class ScraperController(RequestController):
 	

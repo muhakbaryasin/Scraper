@@ -69,6 +69,7 @@ class Scraper(object):
 		elif self.getMethod() == "POST_JSON":
 			req = requests.post(self.url, json=self.getParams(), headers=self.headers)
 
-		#print(req.headers)
-		#print(req.request.body)
+		print('Request url -> {}'.format(req.url))
+		print('Request headers : {}'.format(req.headers))
+		print('Request body : {}'.format(req.request.body))
 		return req

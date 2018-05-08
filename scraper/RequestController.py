@@ -73,7 +73,7 @@ class RequestController(object):
 	
 	def isText(self, input_):
 		# text regex
-		return (re.compile(r"^[A-Za-z0-9\s\t\n.,:;?!'\()%\"\-\+@]+$").match(input_))
+		return (re.compile(r"^[A-Za-z0-9\/\s\t\n.,:;?!'\()%\"\-\+@]+$").match(input_))
 
 	def isBoolean(self, input_):
 		return (re.compile(r"^[0-1]+$").match(input_))
