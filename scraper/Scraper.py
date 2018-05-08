@@ -12,13 +12,11 @@ class Scraper(object):
 		self.headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36'}
 		
 		if headers is not None:
-			self.updateHeaders(headers)		
-		
-		pass
+			self.updateHeaders(headers)
 	
 	def setMethod(self, method):
-		if type(method) is not str and (method != 'GET' or method != 'POST'):
-			raise Exception("Method must be a string GET/POST")
+		if type(method) is not str and (method != 'GET' or method != 'POST' or method != 'GET_JSON' or method != 'POST_JSON'):
+			raise Exception("Method must be a string GET/POST/GET_JSON/POST_JSON")
 
 		self.method = method
 
@@ -66,7 +64,11 @@ class Scraper(object):
 			req = requests.get(self.url, data=self.getParams(), headers=self.headers)
 		elif self.getMethod() == "POST":
 			req = requests.post(self.url, data=self.getParams(), headers=self.headers)
+		elif self.getMethod() == "GET_JSON":
+			req = requests.get(self.url, json=self.getParams(), headers=self.headers)
+		elif self.getMethod() == "POST_JSON":
+			req = requests.post(self.url, json=self.getParams(), headers=self.headers)
 
-		print(req.headers)
-		print(req.request.body)
+		#print(req.headers)
+		#print(req.request.body)
 		return req
