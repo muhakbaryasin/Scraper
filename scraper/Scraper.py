@@ -66,6 +66,7 @@ class Scraper(object):
 			req = requests.get(self.url, data=self.getParams(), headers=self.headers)
 		elif self.getMethod() == "POST":
 			req = requests.post(self.url, data=self.getParams(), headers=self.headers)
+
 		print(req.headers)
 		print(req.request.body)
 		return req

@@ -36,8 +36,12 @@ def scraper(request):
 	
 	res = scraper.execute()
 	# import pdb; pdb.set_trace()
+	try:
+		resp = res.json()
+	except:
+		resp = res.text
 	
-	return {'code' : 'ok', 'message' : 'success', 'data' : res.text}
+	return {'code' : 'ok', 'message' : 'success', 'data' : resp}
 	
 	
 		
