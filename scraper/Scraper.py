@@ -1,10 +1,13 @@
-import requests
+from requests import Request, Session
+from pyquery import PyQuery as pq
+import uuid
 
 class Scraper(object):
 	def __init__(self, url, method='GET', id=None, headers=None):
 		self.setUrl(url)
 		self.setMethod(method)
 		self.setParams( {} )
+		self.session = Session()
 		
 		if id is not None:
 			self.setId(id)
@@ -60,16 +63,31 @@ class Scraper(object):
 		return self.method
 	
 	def execute(self):
-		if self.getMethod() == "GET":
-			req = requests.get(self.url, data=self.getParams(), headers=self.headers)
-		elif self.getMethod() == "POST":
-			req = requests.post(self.url, data=self.getParams(), headers=self.headers)
+		kwargs = {}
+		args = []
+		
+		if self.getMethod() == "GET" or self.getMethod() == "POST":
+			args.append(self.getMethod())
+			kwargs['data'] = self.getParams()
 		elif self.getMethod() == "GET_JSON":
-			req = requests.get(self.url, json=self.getParams(), headers=self.headers)
+			args.append("GET")
+			kwargs['json'] = self.getParams()
 		elif self.getMethod() == "POST_JSON":
-			req = requests.post(self.url, json=self.getParams(), headers=self.headers)
-
+			args.append("POST")
+			kwargs['json'] = self.getParams()
+			
+		args.append(self.url)
+		kwargs['headers'] = self.headers
+		
+		req = Request(*args, **kwargs)
+		
+		response = self.session.head(self.url)
+		content_type = response.headers['content-type']
+		
+		prepared = self.session.prepare_request(req)
 		print('Request url -> {}'.format(req.url))
 		print('Request headers : {}'.format(req.headers))
-		print('Request body : {}'.format(req.request.body))
-		return req
+		print('Request body : {}'.format(prepared.body))
+		res = self.session.send(prepared)
+		
+		return res
