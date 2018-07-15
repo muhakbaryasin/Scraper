@@ -1,6 +1,4 @@
 from requests import Request, Session
-from pyquery import PyQuery as pq
-import uuid
 
 class Scraper(object):
 	def __init__(self, url, method='GET', id=None, headers=None):
@@ -90,4 +88,4 @@ class Scraper(object):
 		print('Request body : {}'.format(prepared.body))
 		res = self.session.send(prepared)
 		
-		return res
+		return (content_type, res)
