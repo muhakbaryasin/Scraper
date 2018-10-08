@@ -1,16 +1,90 @@
 from requests import Request, Session
 
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+from redis import Redis
+import uuid
+import pickle
+
 class Scraper(object):
-	def __init__(self, url, method='GET', id=None, headers=None):
+	def __init__(self, url, id=None):
+		self.session = None
 		self.setUrl(url)
+		self.red = Redis()
+		self.key = 'scrapper_session'
+		
+		if id is not None:
+			self.setId(id)
+		else:
+			self.setId(str(uuid.uuid4()))
+		
+	def setUrl(self, url):
+		if type(url) is not str:
+			raise Exception("Url must be a string.")
+
+		self.url = url
+
+	def setId(self, id):
+		if type(id) is not str:
+			raise Exception("Id must be a string.")
+
+		self.id = id
+	
+	def saveSession():
+		self.red.hset( self.key, self.id, pickle.dumps(self.session) )
+	
+	def loadSession():
+		if id is None:
+			raise Exception('Please specify session id')
+		
+		self.session = pickle.loads(self.red.hget(self.key, self.id) )
+	
+
+class WebDriver(Scraper):
+	def __init__(self, url, id=None):
+		Scraper.__init__(self, url, id=id)
+		options = Options()
+		options.set_headless(headless=True)
+		self.session = webdriver.Firefox(firefox_options=options, executable_path='geckodriver-0.21.0-64linux')
+		#self.session = webdriver.Chrome(executable_path='chromedriver.exe')
+		#import pdb; pdb.set_trace()
+		
+		if id is None:
+			print("get url -> {}".format(url))
+			self.session.get(url)
+	
+	def selectOptionByValue(self, select_elmt, value):
+		for option in select_elmt[0].find_elements_by_tag_name('option'):
+			if option.get_attribute('value') == value:
+				option.click()
+	
+	def findElementsById(self, id_name):
+		return self.session.find_elements_by_id(id_name)
+	
+	def findElementByClass(self, class_name):
+		return self.session.find_elements_by_class(class_name)
+	
+	def findElementByTag(self, tag_name):
+		return self.session.find_elements_by_tag_name(tag_name)
+	
+	def sendKeys(self, element, value):
+		element[0].send_keys(value)
+	
+	def clickElement(self, element):
+		element[0].click()
+	
+	def executeScript(self, script):
+		self.session.execute_script(script)
+		
+
+class Rest(Scraper):
+	def __init__(self, url, method='GET', id=None, headers=None):
+		Scraper.__init__(self, url, id=id)
 		self.setMethod(method)
 		self.setParams( {} )
 		self.session = Session()
 		
-		if id is not None:
-			self.setId(id)
-		
-		self.headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36'}
+		self.headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 6.3;, Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36'}
 		
 		if headers is not None:
 			self.updateHeaders(headers)
@@ -20,18 +94,6 @@ class Scraper(object):
 			raise Exception("Method must be a string GET/POST/GET_JSON/POST_JSON")
 
 		self.method = method
-
-	def setUrl(self, url):
-		if type(url) is not str:
-			raise Exception("Url must be a string.")
-
-		self.url = url
-
-	def setId(self, id):
-		if type(url) is not str:
-			raise Exception("Id must be a string.")
-
-		self.id = id
 
 	def updateHeaders(self, headers):
 		if type(headers) is not dict:
