@@ -84,6 +84,8 @@ class MainView(object):
 				
 				wd.session.save_screenshot(each_action['element']+each_action['action']+each_action['value']+".png")			
 			
+			pgs = None
+			
 			if 'sign_text' in self.request.params and self.request.params['sign_text'] != '':
 				sign_text = self.request.params['sign_text']
 				attempt = 0
@@ -93,11 +95,11 @@ class MainView(object):
 					attempt += 1
 					sleep(1)
 			
-			fl = FileLogger(file_log_name = 'last.html', reference = 'none', data = wd.session.page_source, mode = 'w')
+			fl = FileLogger(file_log_name = 'last.html', reference = 'none', data = pgs, mode = 'w')
 			wd.session.save_screenshot("last.png")
 			wd.session.quit()
 			
-			return {'code' : 'OK', 'message' : 'ok', 'id' : wd.id}
+			return {'code' : 'OK', 'message' : 'ok', 'id' : wd.id, 'b64encoded_page_source' : base64.b64encode( pgs.encode() ).decode()}
 		except Exception as e:
 			try:
 				wd.session.quit()
