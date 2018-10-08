@@ -15,6 +15,7 @@ class Scraper(object):
 		
 		if id is not None:
 			self.setId(id)
+			self.loadSession()
 		else:
 			self.setId(str(uuid.uuid4()))
 		
@@ -45,13 +46,15 @@ class WebDriver(Scraper):
 		Scraper.__init__(self, url, id=id)
 		options = Options()
 		options.set_headless(headless=True)
-		self.session = webdriver.Firefox(firefox_options=options, executable_path='geckodriver-0.21.0-64linux')
-		#self.session = webdriver.Chrome(executable_path='chromedriver.exe')
-		#import pdb; pdb.set_trace()
 		
 		if id is None:
+			self.session = webdriver.Firefox(firefox_options=options, executable_path='geckodriver-0.21.0-64linux')
 			print("get url -> {}".format(url))
 			self.session.get(url)
+		
+			#self.session = webdriver.Chrome(executable_path='chromedriver.exe')
+			#import pdb; pdb.set_trace()
+			
 	
 	def selectOptionByValue(self, select_elmt, value):
 		for option in select_elmt[0].find_elements_by_tag_name('option'):

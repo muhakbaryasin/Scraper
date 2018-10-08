@@ -43,7 +43,7 @@ class MainView(object):
 				json_actions = json.loads( base64.b64decode( self.request.params['json_actions'] ).decode() )
 			else: json_params = None
 			
-			wd.session.save_screenshot("trigana.png")
+			wd.session.save_screenshot("start.png")
 			
 			for each_action in json_actions:
 				print(each_action)
@@ -91,13 +91,18 @@ class MainView(object):
 				attempt = 0
 				
 				while wd.session.page_source.find(sign_text) < 0 and attempt < 11:
-					pgs = wd.session.page_source
 					attempt += 1
 					sleep(1)
 			
+			pgs = wd.session.page_source
+			
 			fl = FileLogger(file_log_name = 'last.html', reference = 'none', data = pgs, mode = 'w')
 			wd.session.save_screenshot("last.png")
-			wd.session.quit()
+			
+			if 'preserve_session' in self.request.params and self.request.params['preserve_session'] == '1':
+				wd.saveSession()
+			else:
+				wd.session.quit()
 			
 			return {'code' : 'OK', 'message' : 'ok', 'id' : wd.id, 'b64encoded_page_source' : base64.b64encode( pgs.encode() ).decode()}
 		except Exception as e:
